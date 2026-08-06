@@ -1,0 +1,29 @@
+{
+  "pages/about/profile": {
+    "mediaType": "image",
+    "currentUrl": "https://img1.wsimg.com/isteam/getty/1455943837",
+    "searchQuery": "young male software engineer developer professional portrait dark background",
+    "alternatives": [
+      "https://img1.wsimg.com/isteam/getty/2215785912",
+      "https://img1.wsimg.com/isteam/getty/964380648"
+    ],
+    "userModified": false,
+    "createdAt": "2026-06-05T12:58:31.364Z",
+    "lastUpdated": "2026-06-05T12:58:31.364Z",
+    "gettyId": "1455943837",
+    "alternativeGettyIds": [
+      "2215785912",
+      "964380648"
+    ],
+    "requestedSize": {
+      "width": 500,
+      "height": 600,
+      "fit": "cover"
+    },
+    "orientations": "vertical",
+    "compositions": "portrait,headshot",
+    "graphicalStyles": "photography",
+    "numberOfPeople": "one",
+    "ageOfPeople": "young_adult"
+  }
+}
