@@ -66,6 +66,7 @@ if (corsOrigins.length === 0) {
 }
 
 export default defineConfig(({ mode, isSsrBuild }) => ({
+	base: "/my-portfolio-website/",
 	envPrefix: ["VITE_", "SITE_"],
 
 	plugins: [
