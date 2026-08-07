@@ -35,10 +35,10 @@ export default function Footer() {
           {/* Brand Col */}
           <div className="md:col-span-2 space-y-4">
             <Link to="/" className="inline-block font-display text-xl font-extrabold text-white tracking-wide">
-              ABHIJEET<span className="text-[#00f0ff]">.DEV</span>
+              ABHIJEET4<span className="text-[#00f0ff]">.DEV</span>
             </Link>
             <p className="text-sm text-slate-400 max-w-md leading-relaxed">
-              Crafting extraordinary 2026 digital software experiences, high-performance web systems, and intelligent AI tools with passion and precision.
+              Full-Stack & AI Engineer specializing in MERN Stack, GEN-AI, LLM Chatbots. Building Scalable AI Integrateds Web Applications, Custom LLM Chatbots Powered by Strong C++ DSA Fundamentals .
             </p>
             <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
               <span className="relative flex h-2 w-2">
@@ -54,6 +54,7 @@ export default function Footer() {
             <h4 className="text-xs font-mono uppercase tracking-widest text-[#00f0ff] mb-4">
               Navigation
             </h4>
+
             <ul className="space-y-2.5 text-sm font-sans">
               {[
                 { href: '/', label: 'Home' },
@@ -111,7 +112,7 @@ export default function Footer() {
           <p>© {currentYear} Abhijeet Singh Khichi. All rights reserved.</p>
           <div className="flex items-center gap-2">
             <Radio size={12} className="text-[#00f0ff] animate-pulse" />
-            <span>SYSTEM OPERATIONAL // TOP 0.000001% EXPERIENCE</span>
+            <span><>AVAILABLE FOR STACKS:</> MERN + LLM + GEN-AI</span>
           </div>
         </div>
       </div>
