@@ -32,7 +32,7 @@ export default function Header() {
         >
           <div className="w-2.5 h-2.5 rounded-full bg-[#00f0ff] animate-pulse shadow-[0_0_10px_#00f0ff]" />
           <span className="font-display font-bold text-sm tracking-wider text-white">
-            ABHIJEET<span className="text-[#00f0ff]">.DEV</span>
+            ABHIJEET4<span className="text-[#00f0ff]">.DEV</span>
           </span>
         </Link>
 
@@ -85,7 +85,7 @@ export default function Header() {
             to="/contact"
             className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-[#00f0ff] to-[#0099bb] text-xs font-mono font-bold text-[#030308] hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all duration-300"
           >
-            <Sparkles size={13} /> Hire Me
+            <Sparkles size={13} /> Get in Touch
           </Link>
         </div>
 
