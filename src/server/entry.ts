@@ -6,6 +6,7 @@ import { readFileSync } from "node:fs";
 // <api-imports>
 import contact_post_0 from "./api/contact/POST";
 import health_get_1 from "./api/health/GET";
+import ai_post_2 from "./api/ai/POST";
 // </api-imports>
 import { seoRoutes } from "../lib/seo-routes";
 
@@ -34,6 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 // <api-registrations>
 app.post("/api/contact", contact_post_0);
 app.get("/api/health", health_get_1);
+app.post("/api/ai", ai_post_2);
 // </api-registrations>
 
 // Error middleware must be registered AFTER the routes it protects; Express

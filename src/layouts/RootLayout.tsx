@@ -1,3 +1,4 @@
+import AIChatbot from '@/components/AIChatbot';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import { type ReactElement } from 'react';
 import { ScrollRestoration } from 'react-router-dom';
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <Header />
       <main className="relative z-10">{children}</main>
       <Footer />
+      <AIChatbot />     
     </Website>
   );
 }
