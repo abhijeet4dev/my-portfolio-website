@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState, type ChangeEvent } from 'react';
 import { Sparkles, X, UserRound, FileText, Globe } from 'lucide-react';
 
 type Section = 'assistant' | 'pdf' | 'general';
@@ -13,6 +13,14 @@ export default function AIChatBox() {
   const [reply, setReply] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // PDF Reader State
+  const pdfInputRef = useRef<HTMLInputElement>(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
+  const [pdfText, setPdfText] = useState('');
+  const [pdfName, setPdfName] = useState('');
+  const [pdfError, setPdfError] = useState('');
+  
+  // ABHIJEET ASSISTANCE
   const sendMessage = async (quickMessage?: string) => {
     const textToSend = quickMessage ?? message;
 
@@ -22,7 +30,7 @@ export default function AIChatBox() {
     setReply('');
 
     try {
-      const response = await fetch('/api/ai', {
+      const response = await window.fetch('/api/ai', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,11 +52,79 @@ export default function AIChatBox() {
       setMessage('');
     } catch (error) {
       console.error('AI chat error:', error);
+     
       setReply(
         'Sorry, I could not get a response right now.'
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  //PDF UPLOAD + TEXT EXTRACTION
+
+   const handlePdfUpload = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      setPdfError('Please select a PDF file.');
+      return;
+    }
+
+    setPdfLoading(true);
+    setPdfError('');
+    setPdfText('');
+    setPdfName(file.name);
+
+    try {
+      // Read PDF as ArrayBuffer
+      const arrayBuffer = await file.arrayBuffer();
+
+      // Convert ArrayBuffer to base64
+      const bytes = new Uint8Array(arrayBuffer);
+
+      let binary = '';
+      
+      for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+
+      const base64 = window.btoa(binary);
+
+      // Send PDF to backend
+      const response = await window.fetch('/api/pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pdf: base64,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || 'Failed to read PDF.'
+        );
+      }
+
+      setPdfText(data.text || '');
+    } catch (error) {
+      console.error('PDF upload error:', error);
+
+      setPdfError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to read PDF.'
+      );
+    } finally {
+      setPdfLoading(false);
     }
   };
 
@@ -222,6 +298,8 @@ export default function AIChatBox() {
                   Reader
                 </span>
               </button>
+           
+
 
               {/* GENERAL AI */}
               <button
@@ -249,20 +327,39 @@ export default function AIChatBox() {
               </button>
             </div>
 
-            {/* MAIN CONTENT */}
+
+
+
+        {/* MAIN CONTENT */}
+
+
+
             <div className="px-5 py-6 min-h-[280px]">
 
-              {/* SECTION 1 — ABHIJEET ASSISTANT */}
-              {activeSection === 'assistant' && (
-                <div className="space-y-5">
 
-                  <div>
+
+        {/* SECTION 1 — ABHIJEET ASSISTANT */}
+          
+
+          {activeSection === 'assistant' && (
+           
+           
+            <div
+                className="
+                  flex min-h-[260px] 
+                  flex-col items-center justify-center text-center 
+                "
+            >
+
+
+                <div>
+                    
                     <span className="text-[9px] font-mono tracking-[0.15em] text-[#00f0ff]">
                       ABHIJEET ASSISTANT
                     </span>
 
                     <h3 className="mt-2 text-lg font-semibold text-white">
-                      Ask about Abhijeet.
+                      Ask about Him.
                     </h3>
 
                     <p className="mt-2 text-xs leading-relaxed text-slate-400">
@@ -270,10 +367,13 @@ export default function AIChatBox() {
                       coding journey, projects, goals, or
                       technical interests.
                     </p>
-                  </div>
+                
+                </div>
 
-                  {/* QUICK QUESTIONS */}
-                  <div>
+                {/* QUICK QUESTIONS */}
+                  
+                <div>
+                 
                     <p className="mb-2 text-[9px] font-mono text-slate-500">
                       QUICK QUESTIONS
                     </p>
@@ -281,10 +381,8 @@ export default function AIChatBox() {
                     <div className="flex flex-wrap gap-2">
 
 
-
-
                       <button
-                      onClick={() => sendMessage("Specific question")}
+                        onClick={() => sendMessage("Specific question")}
                         className="
                           rounded-full
                           border border-white/10
@@ -297,9 +395,6 @@ export default function AIChatBox() {
                         "
                       >
                       </button>
-
-
-                   
 
                       <button
                         onClick={() => sendMessage("Who is Abhijeet?")}
@@ -316,10 +411,7 @@ export default function AIChatBox() {
                       >
                         Who is Abhijeet?
                       </button>
-
-
-                    
-
+            
                       <button
                         onClick={() => sendMessage("What are his skills?")}
                         className="
@@ -334,10 +426,7 @@ export default function AIChatBox() {
                         "
                       >
                         What are his skills?
-                      </button>
-
-
-                     
+                      </button>                     
 
                       <button
                         onClick={() => sendMessage("What is Abhijeet Learning?")}
@@ -355,28 +444,25 @@ export default function AIChatBox() {
                         What is he learning?
                       </button>
                         
-                      
-
-
                     </div>
-                  </div>
+                
+                </div>
 
 
-
-               {(reply || loading) && (
-                 <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                   <p className="text-[9px] font-mono text-[#00f0ff] mb-1">
+                {(reply || loading) && (
+                  <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                    <p className="text-[9px] font-mono text-[#00f0ff] mb-1">
                      VEDA AI
-                   </p>
+                    </p>
                
-                   <p className="text-xs leading-relaxed text-slate-300">
+                    <p className="text-xs leading-relaxed text-slate-300">
                      {loading ? "Thinking..." : reply}
-                   </p>
-                 </div>
-               )}
+                    </p>
+                  </div>
+                )}
 
 
-                  {/* CHAT INPUT */}
+                {/* CHAT INPUT */}
                   <div className="flex items-center gap-2 pt-2">
 
                     <input
@@ -421,75 +507,243 @@ export default function AIChatBox() {
                     </button>
 
                   </div>
-                </div>
-              )}
+                
+            </div>
+          )}
 
-              {/* SECTION 2 — PDF READER */}
-              {activeSection === 'pdf' && (
-                <div className="flex min-h-[260px] flex-col items-center justify-center text-center">
 
-                  <div
+
+          {/* SECTION 2 — PDF READER */}
+
+
+          {activeSection === 'pdf' && (
+
+
+            <div 
+                className="
+                  flex min-h-[260px] 
+                  flex-col items-center justify-center 
+                  text-center 
+                "
+            >
+
+
+                <div
                     className="
-                      flex h-14 w-14
                       items-center justify-center
                       rounded-2xl
                       bg-[#00f0ff]/10
                       border border-[#00f0ff]/20
                       text-[#00f0ff]
+                      shadow-[0_0_20px_rgba(0,240,255,0.06)]
                     "
-                  >
-                    <FileText size={24} />
-                  </div>
-
-                  <h3 className="mt-4 text-sm font-semibold text-white">
-                    Veda PDF Reader
-                  </h3>
-
-                  <p className="mt-2 max-w-[260px] text-xs leading-relaxed text-slate-500">
-                    Upload a PDF and ask questions about
-                    its contents.
-                  </p>
-
-                  <span className="mt-5 rounded-full border border-[#00f0ff]/20 bg-[#00f0ff]/5 px-3 py-1 text-[8px] font-mono tracking-wider text-[#00f0ff]">
-                    COMING NEXT
-                  </span>
-
-                </div>
-              )}
-
-              {/* SECTION 3 — GENERAL AI */}
-              {activeSection === 'general' && (
-                <div className="flex min-h-[260px] flex-col items-center justify-center text-center">
-
-                  <div
+                >
+                    
+                <button
+                    type="button"
+                    onClick={() => pdfInputRef.current?.click()}
+                    aria-label="Upload PDF"
                     className="
                       flex h-14 w-14
                       items-center justify-center
                       rounded-2xl
-                      bg-[#a78bfa]/10
-                      border border-[#a78bfa]/20
-                      text-[#a78bfa]
+                      border border-[#00f0ff]/20
+                      bg-[#00f0ff]/10
+                      text-[#00f0ff]
+                      shadow-[0_0_20px_rgba(0,240,255,0.06)]
+                      hover:border-[#00f0ff]/40
+                      hover:bg-[#00f0ff]/15
+                      hover:shadow-[0_0_25px_rgba(0,240,255,0.12)]
+                      transition-all duration-200
+                      cursor-pointer
                     "
-                  >
-                    <Globe size={24} />
-                  </div>
+                >
+                  <FileText size={24} />
+                </button>            
+                
+                </div>
 
-                  <h3 className="mt-4 text-sm font-semibold text-white">
+                {/* Pdf Label */}
+
+                <span
+                    className="
+                      mt-4
+                      text-[8px]
+                      font-mono
+                      font-medium
+                      tracking-[0.18em]
+                      text-slate-400
+                    "
+                >
+                  PDF INTELLIGENCE
+                </span>
+
+                
+                {/* Heading */}
+
+                <h3 
+                    className="
+                      mt-4 
+                      text-base
+                      font-semibold
+                      tracking-tight
+                     text-white
+                    "
+                >
+                  Veda PDF Reader
+                </h3>
+
+                {/* DESCRIPTION */}
+
+                <p 
+                    className="
+                      mt-2 
+                      max-w-[270px] 
+                      text-xs 
+                      leading-relaxed
+                      text-slate-400
+                    "
+                >
+                  Understand every page, get instant summaries, and ask anything about it.
+                  
+                </p>
+                
+               
+                {/* UPLOAD BUTTON */}  
+                
+                <button
+                    type="button"
+                    onClick={() => pdfInputRef.current?.click()}
+                    disabled={pdfLoading}
+                    className="
+                      items-center justify-center
+                      mt-5 
+                      rounded-2xl
+                      border border-[#00f0ff]/40
+                      bg-[#00f0ff]/10
+                      px-4 py-2.5
+                      text-[9px]
+                      font-mono
+                      font-medium
+                      tracking-[0.08em]
+                      text-[#00f0ff]
+                      shadow-[0_0_16px_rgba(0,240,255,0.06)]
+                      hover:bg-[#00f0ff]/15
+                      hover:border-[#00f0ff]/70
+                      hover:shadow-[0_0_22px_rgba(0,240,255,0.12)]
+                      transition-all duration-200
+                      disabled:opacity-50 
+                    "
+                >
+                  {pdfLoading
+                     ? 'VEDA IS READING...'
+                     : 'DROP YOUR PDF, LET VEDA COOK ✨'}
+                </button>
+
+                {/* AI MICROCOPY */}
+
+                <span 
+                    className="
+                      mt-4
+                      rounded-full
+                      border border-white/10
+                      bg-white/[0.03]
+                      px-3 py1.5
+                      text-[9px]
+                      font-mono 
+                      tracking-[0.08em]
+                      text-slate-400 
+                    "
+                >
+                  Your PDF has lore — feed me, I’ll decode it 👀
+                </span>
+
+                {/* PDF INPUT */}
+                  
+                <input
+                    ref={pdfInputRef}
+                    type="file"
+                    accept="application/pdf"
+                    className="hidden"
+                    onChange={handlePdfUpload}
+                />
+                
+                {/* PDF STATUS */}
+                 
+                {pdfLoading && (
+                    <p className="mt-4 text-[9px] font-mono text-[#00f0ff]">
+                      VEDA IS READING YOUR PDF...
+                    </p>
+                )}
+
+                {pdfName && !pdfLoading && !pdfError && (
+                    <p className="mt-3 max-w-[270px] truncate text-[9px] font-mono text-slate-400">
+                      {pdfName}
+                    </p>
+                )}
+
+                {pdfError && (
+                    <p className="mt-3 max-w-[270px] text-[9px] text-red-400">
+                      {pdfError}
+                    </p>
+                )}
+
+                {pdfText && !pdfLoading && (
+                    <div className="mt-4 max-h-32 w-full overflow-y-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-left">
+                      <p className="mb-2 text-[8px] font-mono tracking-[0.12em] text-[#00f0ff]">
+                        PDF CONTENT EXTRACTED
+                      </p>
+
+                      <p className="whitespace-pre-wrap text-[9px] leading-relaxed text-slate-400">
+                        {pdfText}
+                      </p>
+                    </div>
+                )}
+
+                
+            </div>
+          )}
+
+
+
+      {/* SECTION 3 — GENERAL AI */}
+      {activeSection === 'general' && (
+
+
+          <div className="flex min-h-[260px] flex-col items-center justify-center text-center">
+
+
+              <div
+                  className="
+                    flex h-14 w-14
+                    items-center justify-center
+                    rounded-2xl
+                    bg-[#a78bfa]/10
+                    border border-[#a78bfa]/20
+                    text-[#a78bfa]
+                  "
+              >
+                   
+              <Globe size={24} />
+                  
+              </div>
+
+              <h3 className="mt-4 text-sm font-semibold text-white">
                     Veda General Intelligence
-                  </h3>
+              </h3>
 
-                  <p className="mt-2 max-w-[260px] text-xs leading-relaxed text-slate-500">
+              <p className="mt-2 max-w-[260px] text-xs leading-relaxed text-slate-500">
                     Ask general questions and get concise
                     AI-powered answers.
-                  </p>
+              </p>
 
-                  <span className="mt-5 rounded-full border border-[#a78bfa]/20 bg-[#a78bfa]/5 px-3 py-1 text-[8px] font-mono tracking-wider text-[#a78bfa]">
-                    FUTURE MODULE
-                  </span>
+              <span className="mt-5 rounded-full border border-[#a78bfa]/20 bg-[#a78bfa]/5 px-3 py-1 text-[8px] font-mono tracking-wider text-[#a78bfa]">
+                    
+              </span>
 
-                </div>
-              )}
             </div>
+          )}
+        </div>
 
             {/* FOOTER */}
             <div className="border-t border-white/10 px-5 py-4 text-center">

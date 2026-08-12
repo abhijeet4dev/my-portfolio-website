@@ -7,7 +7,9 @@ import { readFileSync } from "node:fs";
 import contact_post_0 from "./api/contact/POST";
 import health_get_1 from "./api/health/GET";
 import ai_post_2 from "./api/ai/POST";
+import pdf_post_3 from "./api/pdf/POST";
 // </api-imports>
+
 import { seoRoutes } from "../lib/seo-routes";
 
 function normalizeCommerceApiBaseUrlEnv() {
@@ -36,6 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 app.post("/api/contact", contact_post_0);
 app.get("/api/health", health_get_1);
 app.post("/api/ai", ai_post_2);
+app.post("/api/pdf", pdf_post_3);
 // </api-registrations>
 
 // Error middleware must be registered AFTER the routes it protects; Express
