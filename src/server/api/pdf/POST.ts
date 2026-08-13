@@ -3,7 +3,7 @@ import { PDFParse } from "pdf-parse";
 
 export default async function handler(
   req: Request,
-  res: Response,
+  res: Response
 ) {
   if (req.method !== "POST") {
     return res.status(405).json({
