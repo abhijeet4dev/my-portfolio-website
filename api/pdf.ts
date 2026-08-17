@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { CanvasFactory } from "pdf-parse/worker" ;
 import { PDFParse } from "pdf-parse";
 
 export const config = {
@@ -34,6 +35,7 @@ export default async function handler(
 
     const parser = new PDFParse({
       data: pdfBuffer,
+      CanvasFactory,
     });
 
     const result = await parser.getText();
